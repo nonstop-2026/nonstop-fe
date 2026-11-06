@@ -6,7 +6,7 @@
 | 작성일    | 2026-11-06                                                                                                                                             |
 | 상태      | 초안. 백엔드 `openapi.yaml` 미작성                                                                                                                     |
 | 마감      | 2026-11-18 최종 발표 · 제출                                                                                                                            |
-| 관련 문서 | 백엔드 [docs/spec.md](https://github.com/nonstop-2026/nonstop-be/blob/main/docs/spec.md), [CLAUDE.md](../CLAUDE.md), [계획서](plan/frontend-plan.html) |
+| 관련 문서 | 백엔드 [docs/spec.md](https://github.com/nonstop-2026/nonstop-be/blob/main/docs/spec.md), [CLAUDE.md](../CLAUDE.md) |
 
 ## 1. 개요
 
