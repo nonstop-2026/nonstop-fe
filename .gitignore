@@ -1,0 +1,47 @@
+# docs\spec.md 기준 ignore 시킬 파일들.
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+dist-ssr/
+*.local
+
+# Environment variables (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# Firebase local files
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# Test and tool caches
+coverage/
+.vitest/
+.eslintcache
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 걍 내가 보기 쉽게 하려고 만든 docs
+docs/learn/
+docs/plan/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Vite PWA dev output
+dev-dist/
