@@ -1,0 +1,180 @@
+@import 'tailwindcss';
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+
+/* 디자인 토큰: docs/design/nonstop-design-tokens.md 6절 그대로 */
+
+/* Layer 1: primitives. Never referenced from components. */
+:root {
+  --ink-0: #ffffff;
+  --ink-25: #fcfbfc;
+  --ink-50: #f7f5f7;
+  --ink-100: #efebef;
+  --ink-200: #dfdbe0;
+  --ink-300: #c7c2c8;
+  --ink-400: #a8a2a9;
+  --ink-500: #8a848b;
+  --ink-600: #706971;
+  --ink-700: #575058;
+  --ink-800: #3c353e;
+  --ink-900: #251d26;
+  --ink-950: #150f16;
+  --ink-dark-surface: #1e181f;
+  --ink-dark-raised: #2a242b;
+
+  --apricot-50: #fff6f0;
+  --apricot-100: #ffeadc;
+  --apricot-300: #f8b78b;
+  --apricot-500: #ca7839;
+  --apricot-700: #874301;
+  --apricot-dark-tint: #55341c;
+
+  --red-300: #feb0aa;
+  --red-700: #a21723;
+}
+
+/* Layer 2: semantic values, light (demo default) */
+:root {
+  color-scheme: light;
+  --c-canvas: var(--ink-25);
+  --c-surface: var(--ink-0);
+  --c-surface-muted: var(--ink-50);
+  --c-fg: var(--ink-900);
+  --c-fg-secondary: var(--ink-700);
+  --c-fg-tertiary: var(--ink-600);
+  --c-line-control: var(--ink-500);
+  --c-line-divider: var(--ink-200);
+  --c-primary: var(--ink-900);
+  --c-on-primary: var(--ink-0);
+  --c-accent: var(--apricot-300);
+  --c-on-accent: var(--ink-900);
+  --c-accent-fg: var(--apricot-700);
+  --c-accent-graphic: var(--apricot-500);
+  --c-accent-soft: var(--apricot-50);
+  --c-highlight: var(--apricot-100);
+  --c-danger: var(--red-700);
+  --c-focus: var(--ink-900);
+}
+
+/* Layer 2: semantic values, dark. Defined but not enabled during the demo. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --c-canvas: var(--ink-950);
+  --c-surface: var(--ink-dark-surface);
+  --c-surface-muted: var(--ink-dark-raised);
+  --c-fg: var(--ink-50);
+  --c-fg-secondary: var(--ink-300);
+  --c-fg-tertiary: var(--ink-400);
+  --c-line-divider: var(--ink-dark-raised);
+  --c-primary: var(--ink-50);
+  --c-on-primary: var(--ink-950);
+  --c-on-accent: var(--ink-950);
+  --c-accent-fg: var(--apricot-300);
+  --c-accent-graphic: var(--apricot-300);
+  --c-accent-soft: var(--ink-dark-raised);
+  --c-highlight: var(--apricot-dark-tint);
+  --c-danger: var(--red-300);
+  --c-focus: var(--ink-50);
+}
+
+/* Remove Tailwind defaults so only project tokens produce utilities */
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+  --text-*: initial;
+  --font-weight-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --blur-*: initial;
+  --animate-*: initial;
+  --ease-*: initial;
+
+  --font-sans:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+    'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji',
+    sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-title: 650;
+  --font-weight-bold: 700;
+
+  --text-display: 1.75rem;
+  --text-display--line-height: 2.25rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 700;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.875rem;
+  --text-title--letter-spacing: -0.02em;
+  --text-title--font-weight: 700;
+  --text-paper-title: 1.25rem;
+  --text-paper-title--line-height: 1.75rem;
+  --text-paper-title--letter-spacing: -0.02em;
+  --text-paper-title--font-weight: 650;
+  --text-headline: 1.0625rem;
+  --text-headline--line-height: 1.5rem;
+  --text-headline--letter-spacing: -0.01em;
+  --text-headline--font-weight: 600;
+  --text-body: 1rem;
+  --text-body--line-height: 1.625rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.375rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.125rem;
+
+  --radius-mark: 4px;
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  --shadow-overlay: 0 8px 24px rgb(21 15 22 / 0.12), 0 2px 6px rgb(21 15 22 / 0.08);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --container-app: 480px;
+}
+
+/* Expose semantic colors as utilities that follow the theme at runtime */
+@theme inline {
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-surface-muted: var(--c-surface-muted);
+  --color-fg: var(--c-fg);
+  --color-fg-secondary: var(--c-fg-secondary);
+  --color-fg-tertiary: var(--c-fg-tertiary);
+  --color-line-control: var(--c-line-control);
+  --color-line-divider: var(--c-line-divider);
+  --color-primary: var(--c-primary);
+  --color-on-primary: var(--c-on-primary);
+  --color-accent: var(--c-accent);
+  --color-on-accent: var(--c-on-accent);
+  --color-accent-fg: var(--c-accent-fg);
+  --color-accent-graphic: var(--c-accent-graphic);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-highlight: var(--c-highlight);
+  --color-danger: var(--c-danger);
+  --color-focus: var(--c-focus);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-canvas font-sans text-fg antialiased;
+    word-break: keep-all;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-focus;
+  }
+}
+
+/* 가로 스크롤 줄에서 스크롤바 숨기기 */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
