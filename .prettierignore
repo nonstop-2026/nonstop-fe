@@ -1,0 +1,14 @@
+dist
+dev-dist
+coverage
+pnpm-lock.yaml
+public/mockServiceWorker.js
+docs/plan
+docs/learn
+src/shared/api/schema.d.ts
+
+# 팀원이 작성한 원본을 그대로 둔다 (feat/cover-script)
+src/shared/ui/PaperCover.tsx
+
+# 디자인 문서는 원본 그대로 둔다
+docs/design
