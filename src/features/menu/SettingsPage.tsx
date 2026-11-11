@@ -1,17 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { queryClient } from '@/shared/api/queries'
-import { resetDevice, useProfile } from '@/shared/store/device'
+import { resetDevice } from '@/shared/store/device'
 import { Button } from '@/shared/ui/controls'
 import { BottomSheet } from '@/shared/ui/feedback'
-import { LevelSelector } from '@/shared/ui/LevelSelector'
 import { TopBar } from '@/shared/ui/TopBar'
 
-/** 설정: 기본 읽기 수준, 기기 데이터 초기화 */
+/** 기기 데이터: 초기화. 기본 읽기 수준은 메뉴 화면으로 옮겼다 */
 export function SettingsPage() {
   const navigate = useNavigate()
-  const defaultLevel = useProfile((s) => s.defaultLevel)
-  const setDefaultLevel = useProfile((s) => s.setDefaultLevel)
   const [confirming, setConfirming] = useState(false)
 
   const reset = () => {
@@ -23,12 +20,9 @@ export function SettingsPage() {
 
   return (
     <>
-      <TopBar title="설정" />
+      <TopBar title="기기 데이터" />
       <main className="flex flex-col gap-8 px-5 pt-6 pb-8">
-        <LevelSelector label="기본 읽기 수준" value={defaultLevel} onChange={setDefaultLevel} />
-
         <section className="flex flex-col items-start gap-3">
-          <h2 className="text-headline text-fg">기기 데이터</h2>
           <p className="text-body-sm text-fg-secondary">
             관심 분야, 저장 목록, 출석 기록은 이 기기에만 저장돼요.
           </p>

@@ -33,7 +33,7 @@ export function DonePage() {
 
   const start = () => {
     if (!weights.data) return
-    completeOnboarding(weights.data.interests, level)
+    completeOnboarding(keywords, weights.data.interests, level)
     setFinished(true)
     reset()
     navigate('/home', { replace: true })
@@ -62,11 +62,7 @@ export function DonePage() {
         )}
         {weights.isError && (
           <div role="alert" className="mt-3 flex flex-col items-start gap-3">
-            <p className="text-body-sm text-danger">
-              {weights.error instanceof ApiError && weights.error.detail
-                ? weights.error.detail
-                : '취향을 계산하지 못했어요. 다시 시도해 주세요'}
-            </p>
+            <p className="text-body-sm text-danger">{weightsErrorMessage(weights.error)}</p>
             <Button variant="secondary" onClick={() => mutate({ keywords, swipes })}>
               다시 시도
             </Button>
@@ -95,4 +91,11 @@ export function DonePage() {
       </div>
     </main>
   )
+}
+
+/** 503(서버가 논문 데이터를 못 불러옴) · 400 등 서버 문구가 있으면 그대로, 없으면 기본 문구 */
+function weightsErrorMessage(error: unknown) {
+  if (error instanceof ApiError && error.code !== 'NETWORK_ERROR' && error.code !== 'TIMEOUT')
+    return error.detail ? `${error.title}. ${error.detail}` : error.title
+  return '취향을 계산하지 못했어요. 다시 시도해 주세요'
 }

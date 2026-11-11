@@ -70,6 +70,12 @@ export const ChevronDownIcon = (p: IconProps) => (
   </Svg>
 )
 
+export const CheckIcon = (p: IconProps) => (
+  <Svg {...p} filled={false}>
+    <path d="m5 12.5 4.5 4.5L19 7.5" />
+  </Svg>
+)
+
 export const CloseIcon = (p: IconProps) => (
   <Svg {...p} filled={false}>
     <path d="m6 6 12 12M18 6 6 18" />

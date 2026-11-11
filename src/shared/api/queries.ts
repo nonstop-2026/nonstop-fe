@@ -82,10 +82,11 @@ export function useFeed() {
   })
 }
 
-/** 상세. 읽기 수준을 바꾸는 동안 이전 내용을 유지한다 */
-export function usePaper(paperId: string, level: Level) {
+/** 상세. 읽기 수준을 바꾸는 동안 이전 내용을 유지한다. 피드는 화면 근처 논문만 enabled로 미리 받는다 */
+export function usePaper(paperId: string, level: Level, enabled = true) {
   return useQuery({
     queryKey: ['paper', paperId, level],
+    enabled,
     queryFn: ({ signal }) =>
       apiFetch<PaperDetail>(`/v1/papers/${encodeURIComponent(paperId)}`, {
         query: { level },

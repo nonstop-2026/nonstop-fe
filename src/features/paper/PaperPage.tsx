@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
+import { useGoBack } from '@/shared/lib/navigation'
 import { ApiError } from '@/shared/api/client'
 import { fetchToday, usePaper, usePersonalization } from '@/shared/api/queries'
 import type { Level, PaperDetail } from '@/shared/api/types'
 import { KEYWORD_LABEL } from '@/shared/constants/keywords'
 import { useProfile, useRead, useSaves, useStreak } from '@/shared/store/device'
 import { useToast } from '@/shared/store/toast'
-import { AiBadge, Highlight, IconButton } from '@/shared/ui/controls'
+import { AiBadge, Button, Highlight, IconButton } from '@/shared/ui/controls'
 import { BottomSheet, EmptyState, ErrorState, Mascot } from '@/shared/ui/feedback'
-import { BookmarkIcon, ChevronDownIcon, ExternalIcon } from '@/shared/ui/icons'
+import { BookmarkIcon, CheckIcon, ChevronDownIcon, ExternalIcon } from '@/shared/ui/icons'
 import { LevelSelector } from '@/shared/ui/LevelSelector'
 import { MetaLine } from '@/shared/ui/PaperCard'
 import { TopBar } from '@/shared/ui/TopBar'
@@ -113,6 +114,7 @@ function Body({
   onLevelChange: (level: Level) => void
 }) {
   const { card } = paper
+  const goBack = useGoBack()
   const details = [
     ['방법', card.method],
     ['데이터', card.dataset],
@@ -196,17 +198,23 @@ function Body({
       </Section>
 
       <div>
-        {/* 원문은 arXiv 초록 페이지를 새 탭으로 열기만 한다 */}
-        <a
-          href={paper.abstractUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary text-body-sm font-semibold text-on-primary active:scale-98"
-        >
-          원문 보기
-          <ExternalIcon />
-        </a>
-        <p className="mt-2 text-center text-caption text-fg-tertiary">
+        <div className="grid grid-cols-2 gap-2">
+          {/* 원문은 arXiv 초록 페이지를 새 탭으로 열기만 한다 */}
+          <a
+            href={paper.abstractUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-control border border-line-control bg-surface text-body-sm font-semibold text-fg transition duration-150 ease-out hover:bg-surface-muted active:scale-98 motion-reduce:transition-none"
+          >
+            원문 보기
+            <ExternalIcon />
+          </a>
+          {/* 다 읽은 뒤 들어온 곳(피드 · 홈 · 저장함)으로 돌아간다 */}
+          <Button onClick={goBack}>
+            <CheckIcon />다 읽었어요
+          </Button>
+        </div>
+        <p className="mt-3 text-center text-caption text-fg-tertiary">
           AI 요약에는 오류가 있을 수 있어요. 인용할 때는 원문을 확인해 주세요
         </p>
       </div>

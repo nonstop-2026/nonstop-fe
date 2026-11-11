@@ -4,12 +4,16 @@ import { usePapersByIds } from '@/shared/api/queries'
 import { isWithinDays } from '@/shared/lib/format'
 import { useProfile, useSaves } from '@/shared/store/device'
 import { useToast } from '@/shared/store/toast'
-import { Button, Chip } from '@/shared/ui/controls'
+import { Button, Segmented } from '@/shared/ui/controls'
 import { EmptyState, ErrorState } from '@/shared/ui/feedback'
 import { BookmarkIcon } from '@/shared/ui/icons'
 import { HeroCard, HeroSkeleton } from '@/shared/ui/PaperCard'
 
-const FILTERS = ['전체', '최근 저장'] as const
+const FILTERS = [
+  { value: 'all', label: '전체' },
+  { value: 'recent', label: '최근 7일' },
+] as const
+type Filter = (typeof FILTERS)[number]['value']
 
 /** 저장함: 기기에 둔 저장 목록을 GET /v1/papers?ids= 로 한 번에 받아 카드로 보여 준다 */
 export function SavesPage() {
@@ -18,9 +22,9 @@ export function SavesPage() {
   const toggle = useSaves((s) => s.toggle)
   const level = useProfile((s) => s.defaultLevel)
   const toast = useToast((s) => s.show)
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>('전체')
+  const [filter, setFilter] = useState<Filter>('all')
 
-  const visible = filter === '전체' ? items : items.filter((i) => isWithinDays(i.savedAt, 7))
+  const visible = filter === 'all' ? items : items.filter((i) => isWithinDays(i.savedAt, 7))
   const ids = visible.map((i) => i.paperId)
   const papers = usePapersByIds(ids, level)
 
@@ -32,13 +36,13 @@ export function SavesPage() {
   return (
     <div className="flex flex-col gap-4 px-5 pt-6 pb-8">
       <h1 className="text-title text-fg">저장함</h1>
-      <div className="flex gap-2">
-        {FILTERS.map((f) => (
-          <Chip key={f} selected={filter === f} onClick={() => setFilter(f)}>
-            {f}
-          </Chip>
-        ))}
-      </div>
+      <Segmented
+        label="저장 시기"
+        showLabel={false}
+        options={FILTERS}
+        value={filter}
+        onChange={setFilter}
+      />
 
       {ids.length === 0 && (
         <EmptyState
@@ -67,15 +71,20 @@ export function SavesPage() {
               <li key={paper.paperId}>
                 <HeroCard
                   paper={paper}
-                  action={
-                    <button
-                      type="button"
-                      onClick={() => unsave(paper.paperId)}
-                      aria-label="저장 취소"
-                      className="grid min-h-11 min-w-11 place-items-center rounded-pill bg-surface text-fg"
-                    >
-                      <BookmarkIcon filled />
-                    </button>
+                  footer={
+                    <>
+                      <span className="text-caption text-fg-tertiary slashed-zero tabular-nums">
+                        {savedLabel(items.find((i) => i.paperId === paper.paperId)?.savedAt)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => unsave(paper.paperId)}
+                        aria-label="저장 취소"
+                        className="-mr-3 grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-control text-fg transition-colors duration-150 ease-out hover:bg-surface-muted active:scale-95 motion-reduce:transition-none"
+                      >
+                        <BookmarkIcon filled />
+                      </button>
+                    </>
                   }
                 />
               </li>
@@ -84,4 +93,11 @@ export function SavesPage() {
       )}
     </div>
   )
+}
+
+/** 저장 시각을 "11월 10일 저장" 형식으로 */
+function savedLabel(savedAt?: string) {
+  if (!savedAt) return ''
+  const d = new Date(savedAt)
+  return `${d.getMonth() + 1}월 ${d.getDate()}일 저장`
 }

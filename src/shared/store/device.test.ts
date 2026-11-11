@@ -7,7 +7,7 @@ describe('기기 저장', () => {
   })
 
   it('값을 nonstop:v1: 키로 저장한다', () => {
-    useProfile.getState().completeOnboarding([{ keyword: 'xr', weight: 0.6 }], 'easy')
+    useProfile.getState().completeOnboarding(['xr'], [{ keyword: 'xr', weight: 0.6 }], 'easy')
     useSaves.getState().toggle('2611.00101')
     expect(localStorage.getItem(`${STORAGE_PREFIX}profile`)).toContain('"xr"')
     expect(localStorage.getItem(`${STORAGE_PREFIX}saves`)).toContain('2611.00101')

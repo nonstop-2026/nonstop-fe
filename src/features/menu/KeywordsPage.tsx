@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { ApiError } from '@/shared/api/client'
 import { useComputeWeights } from '@/shared/api/queries'
 import type { KeywordSlug } from '@/shared/api/types'
 import { FIELDS, KEYWORD_LABEL, MIN_KEYWORDS } from '@/shared/constants/keywords'
@@ -14,11 +15,15 @@ import { TopBar } from '@/shared/ui/TopBar'
  */
 export function KeywordsPage() {
   const navigate = useNavigate()
+  const keywords = useProfile((s) => s.keywords)
   const interests = useProfile((s) => s.interests)
   const setInterests = useProfile((s) => s.setInterests)
   const toast = useToast((s) => s.show)
   const weights = useComputeWeights()
-  const [selected, setSelected] = useState<KeywordSlug[]>(() => interests.map((i) => i.keyword))
+  // 직접 고른 키워드를 보여 준다. 이 값이 없던 이전 프로필은 가중치 목록으로 대신한다
+  const [selected, setSelected] = useState<KeywordSlug[]>(() =>
+    keywords.length > 0 ? keywords : interests.map((i) => i.keyword),
+  )
   const enough = selected.length >= MIN_KEYWORDS
 
   const toggle = (k: KeywordSlug) =>
@@ -29,11 +34,16 @@ export function KeywordsPage() {
       { keywords: selected, swipes: [] },
       {
         onSuccess: (data) => {
-          setInterests(data.interests)
+          setInterests(selected, data.interests)
           toast('저장했어요')
           navigate(-1)
         },
-        onError: () => toast('저장하지 못했어요. 다시 시도해 주세요'),
+        onError: (error) =>
+          toast(
+            error instanceof ApiError && error.code === 'SERVICE_UNAVAILABLE'
+              ? '지금은 저장할 수 없어요. 잠시 후 다시 시도해 주세요'
+              : '저장하지 못했어요. 다시 시도해 주세요',
+          ),
       },
     )
 

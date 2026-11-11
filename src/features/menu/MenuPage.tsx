@@ -2,18 +2,25 @@ import { Link } from 'react-router'
 import { cachedToday } from '@/shared/api/queries'
 import { CONTACT_EMAIL } from '@/shared/config/env'
 import { displayCurrent } from '@/shared/lib/streak'
-import { useStreak } from '@/shared/store/device'
+import { useProfile, useStreak } from '@/shared/store/device'
 import { ChevronRightIcon } from '@/shared/ui/icons'
+import { LevelSelector } from '@/shared/ui/LevelSelector'
 
 const ROWS = [
   { to: '/menu/keywords', title: '관심 키워드', desc: '고른 분야를 바꿀 수 있어요' },
-  { to: '/menu/settings', title: '설정', desc: '기본 읽기 수준, 기기 데이터 초기화' },
+  {
+    to: '/menu/settings',
+    title: '기기 데이터',
+    desc: '이 기기에 저장된 기록을 초기화할 수 있어요',
+  },
   { to: '/terms', title: '이용약관', desc: null },
 ]
 
-/** 메뉴: 스트릭 요약 → 관심 키워드 → 설정 → 이용약관 → 개인정보 안내 → 문의 */
+/** 메뉴: 스트릭 요약 → 기본 읽기 수준 → 관심 키워드 · 기기 데이터 · 이용약관 → 개인정보 안내 → 문의 */
 export function MenuPage() {
   const streak = useStreak()
+  const defaultLevel = useProfile((s) => s.defaultLevel)
+  const setDefaultLevel = useProfile((s) => s.setDefaultLevel)
   // 홈에서 받은 today가 있으면 끊긴 연속 기록은 0일로 보여 준다
   const today = cachedToday()
   const current = today ? displayCurrent(streak, today) : streak.current
@@ -34,10 +41,15 @@ export function MenuPage() {
         </div>
       </section>
 
+      <LevelSelector label="기본 읽기 수준" value={defaultLevel} onChange={setDefaultLevel} />
+
       <ul className="divide-y divide-line-divider border-y border-line-divider">
         {ROWS.map((row) => (
           <li key={row.to}>
-            <Link to={row.to} className="flex min-h-11 items-center justify-between py-3">
+            <Link
+              to={row.to}
+              className="-mx-2 flex min-h-11 items-center justify-between rounded-control px-2 py-3 transition-colors duration-150 ease-out hover:bg-surface-muted active:bg-surface-muted motion-reduce:transition-none"
+            >
               <div>
                 <p className="text-body text-fg">{row.title}</p>
                 {row.desc && <p className="text-caption text-fg-tertiary">{row.desc}</p>}

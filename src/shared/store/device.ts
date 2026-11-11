@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware'
-import type { InterestWeight, Level } from '@/shared/api/types'
+import type { InterestWeight, KeywordSlug, Level } from '@/shared/api/types'
 import { applyAttendance, EMPTY_STREAK, type StreakData } from '@/shared/lib/streak'
 
 /**
@@ -38,17 +38,31 @@ const storage = createJSONStorage(() => safeStorage)
 // ---- profile -------------------------------------------------------------
 
 export interface ProfileData {
+  /**
+   * 사용자가 직접 고른 키워드. 서버가 돌려주는 interests에는 좋아요를 누른 논문의 키워드도
+   * 섞여 들어오므로, 관심 키워드 화면에는 이 값을 보여 준다
+   */
+  keywords: KeywordSlug[]
   interests: InterestWeight[]
   defaultLevel: Level
   /** 온보딩을 마친 시각(ISO). null이면 처음 방문 */
   onboardedAt: string | null
 }
 
-const EMPTY_PROFILE: ProfileData = { interests: [], defaultLevel: 'basic', onboardedAt: null }
+const EMPTY_PROFILE: ProfileData = {
+  keywords: [],
+  interests: [],
+  defaultLevel: 'basic',
+  onboardedAt: null,
+}
 
 interface ProfileState extends ProfileData {
-  completeOnboarding: (interests: InterestWeight[], defaultLevel: Level) => void
-  setInterests: (interests: InterestWeight[]) => void
+  completeOnboarding: (
+    keywords: KeywordSlug[],
+    interests: InterestWeight[],
+    defaultLevel: Level,
+  ) => void
+  setInterests: (keywords: KeywordSlug[], interests: InterestWeight[]) => void
   setDefaultLevel: (level: Level) => void
 }
 
@@ -56,9 +70,9 @@ export const useProfile = create<ProfileState>()(
   persist(
     (set) => ({
       ...EMPTY_PROFILE,
-      completeOnboarding: (interests, defaultLevel) =>
-        set({ interests, defaultLevel, onboardedAt: new Date().toISOString() }),
-      setInterests: (interests) => set({ interests }),
+      completeOnboarding: (keywords, interests, defaultLevel) =>
+        set({ keywords, interests, defaultLevel, onboardedAt: new Date().toISOString() }),
+      setInterests: (keywords, interests) => set({ keywords, interests }),
       setDefaultLevel: (defaultLevel) => set({ defaultLevel }),
     }),
     { name: `${STORAGE_PREFIX}profile`, storage },
@@ -153,6 +167,9 @@ export const useRead = create<ReadState>()(
     { name: `${STORAGE_PREFIX}read`, storage },
   ),
 )
+
+/** 이 기기에서 상세를 연 적이 있는 논문인지 (최근 50편). 카드의 "읽음" 표시에 쓴다 */
+export const useIsRead = (paperId: string) => useRead((s) => s.ids.includes(paperId))
 
 // ---- reset ---------------------------------------------------------------
 

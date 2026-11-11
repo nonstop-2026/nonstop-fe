@@ -6,7 +6,7 @@ import type { PaperSummary, Reaction } from '@/shared/api/types'
 import { MIN_KEYWORDS } from '@/shared/constants/keywords'
 import { Button, ProgressSegments } from '@/shared/ui/controls'
 import { ErrorState } from '@/shared/ui/feedback'
-import { UndoIcon } from '@/shared/ui/icons'
+import { ChevronLeftIcon, ChevronRightIcon, UndoIcon } from '@/shared/ui/icons'
 import { CardBody, Cover, HeroSkeleton } from '@/shared/ui/PaperCard'
 import { useOnboarding } from './store'
 
@@ -35,7 +35,9 @@ export function SwipePage() {
       <div className="mt-8 flex items-end justify-between gap-3">
         <div>
           <h1 className="text-title text-fg">이 논문, 흥미로운가요</h1>
-          <p className="mt-1 text-body-sm text-fg-secondary">좌우로 밀어 알려 주세요</p>
+          <p className="mt-1 text-body-sm text-fg-secondary">
+            왼쪽으로 밀면 별로예요, 오른쪽으로 밀면 흥미로워요
+          </p>
         </div>
         <p aria-live="polite" className="text-caption text-fg-tertiary slashed-zero tabular-nums">
           {Math.min(swipes.length + 1, items.length || 10)} / {items.length || 10}
@@ -48,15 +50,27 @@ export function SwipePage() {
         {current && <SwipeCard key={current.paperId} paper={current} onAnswer={answer} />}
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-2">
-        <Button variant="secondary" onClick={() => answer('dislike')} disabled={!current}>
+      <div className="mt-6 grid grid-cols-[1fr_auto_1fr] gap-2">
+        <Button
+          variant="secondary"
+          className="px-2"
+          onClick={() => answer('dislike')}
+          disabled={!current}
+        >
+          <ChevronLeftIcon aria-hidden="true" />
           별로예요
         </Button>
         <Button variant="secondary" onClick={() => answer('skip')} disabled={!current}>
           건너뛰기
         </Button>
-        <Button variant="accent" onClick={() => answer('like')} disabled={!current}>
+        <Button
+          variant="accent"
+          className="px-2"
+          onClick={() => answer('like')}
+          disabled={!current}
+        >
           흥미로워요
+          <ChevronRightIcon aria-hidden="true" />
         </Button>
       </div>
       <Button
@@ -75,6 +89,9 @@ export function SwipePage() {
 function SwipeCard({ paper, onAnswer }: { paper: PaperSummary; onAnswer: (r: Reaction) => void }) {
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-200, 200], [-6, 6])
+  // 미는 방향의 라벨이 점점 진해진다
+  const likeOpacity = useTransform(x, [16, SWIPE_OUT], [0, 1])
+  const dislikeOpacity = useTransform(x, [-SWIPE_OUT, -16], [1, 0])
 
   const fly = (reaction: 'like' | 'dislike') => {
     animate(x, reaction === 'like' ? 480 : -480, { duration: 0.2 }).then(() => onAnswer(reaction))
@@ -102,6 +119,23 @@ function SwipeCard({ paper, onAnswer }: { paper: PaperSummary; onAnswer: (r: Rea
       <div className="p-4">
         <CardBody paper={paper} />
       </div>
+
+      <motion.span
+        aria-hidden="true"
+        // eslint-disable-next-line no-restricted-syntax -- 드래그 거리에 따라 Motion이 매 프레임 투명도를 넣는다
+        style={{ opacity: dislikeOpacity }}
+        className="absolute top-4 right-4 rounded-control border-2 border-line-control bg-surface px-3 py-1 text-headline text-fg-secondary"
+      >
+        별로예요
+      </motion.span>
+      <motion.span
+        aria-hidden="true"
+        // eslint-disable-next-line no-restricted-syntax -- 드래그 거리에 따라 Motion이 매 프레임 투명도를 넣는다
+        style={{ opacity: likeOpacity }}
+        className="absolute top-4 left-4 rounded-control border-2 border-accent-graphic bg-surface px-3 py-1 text-headline text-accent-fg"
+      >
+        흥미로워요
+      </motion.span>
     </motion.article>
   )
 }

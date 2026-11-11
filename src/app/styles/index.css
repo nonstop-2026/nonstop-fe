@@ -158,12 +158,48 @@
   --color-focus: var(--c-focus);
 }
 
+/*
+ * 프로젝트 확장 (디자인 토큰 문서 밖, 2026-11-11 팀 피드백 반영)
+ * - backdrop: 데스크톱에서 가운데 앱 영역(canvas) 바깥 배경. 앱 영역과 경계가 보이게 한 단계 어둡게 둔다.
+ * - .theme-dark: 피드처럼 화면 일부만 어두운 값으로 그린다. 값은 위 dark 블록과 같다.
+ */
+:root {
+  --c-backdrop: var(--ink-100);
+}
+
+.theme-dark {
+  color-scheme: dark;
+  --c-canvas: var(--ink-950);
+  --c-surface: var(--ink-dark-surface);
+  --c-surface-muted: var(--ink-dark-raised);
+  --c-fg: var(--ink-50);
+  --c-fg-secondary: var(--ink-300);
+  --c-fg-tertiary: var(--ink-400);
+  --c-line-control: var(--ink-500);
+  --c-line-divider: var(--ink-dark-raised);
+  --c-primary: var(--ink-50);
+  --c-on-primary: var(--ink-950);
+  --c-on-accent: var(--ink-950);
+  --c-accent-fg: var(--apricot-300);
+  --c-accent-graphic: var(--apricot-300);
+  --c-accent-soft: var(--ink-dark-raised);
+  --c-highlight: var(--apricot-dark-tint);
+  --c-danger: var(--red-300);
+  --c-focus: var(--ink-50);
+}
+
+@theme inline {
+  --color-backdrop: var(--c-backdrop);
+}
+
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    /* 스크롤바가 생기는 화면과 없는 화면에서 가운데 영역이 옆으로 밀리지 않게 자리를 늘 비워 둔다 */
+    scrollbar-gutter: stable;
   }
   body {
-    @apply bg-canvas font-sans text-fg antialiased;
+    @apply bg-backdrop font-sans text-fg antialiased;
     word-break: keep-all;
   }
   :focus-visible {

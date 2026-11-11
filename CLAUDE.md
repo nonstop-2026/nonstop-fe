@@ -22,11 +22,11 @@
 
 - 기능을 만들거나 바꾸면 `docs/implementation.md`를 같이 갱신한다.
 
-## 현재 상태 (2026-11-10)
+## 현재 상태 (2026-11-11)
 
-- 개발 브랜치는 `feat/demo-rebuild`다. 전 화면을 MSW 목 데이터 기준으로 구현했다. 실제 백엔드 연결은 아직 확인하지 않았다.
-- API 계약은 백엔드 `openapi.yaml` v0.1.1을 따른다(`src/shared/api/types.ts`). 백엔드는 API 6개 구현과 Firestore 데모 논문 저장을 마쳤다.
-- 화면 · 디자인 기준은 `docs/design/` 디자인 시스템 0.3이다. 논문 카드 표지는 `src/shared/ui/PaperCover.tsx`(팀원 원본)를 쓴다.
+- 개발 브랜치는 `feat/demo-rebuild`다. 전 화면을 구현했고, 배포 백엔드(`https://nonstop-be.onrender.com`)로 API 6개 연동을 확인했다. 개발 기본값은 계속 MSW 목 모드다.
+- API 계약은 백엔드 `openapi.yaml` v0.1.1을 따른다. `pnpm gen:api`로 만든 `src/shared/api/schema.d.ts`를 `types.ts`가 다시 내보낸다.
+- 화면 · 디자인 기준은 `docs/design/` 디자인 시스템 0.3이다. 논문 카드 표지는 `src/shared/ui/PaperCover.tsx`(팀원 원본)를 쓴다. 팀 피드백으로 달라진 부분과 상태별 동작은 `docs/interaction.md`에 있다.
 - 이전에 만든 코드는 로컬 브랜치 `feat/demo-scope-no-login`에 보관한다.
 
 ## 작업 방식
@@ -53,29 +53,29 @@
 
 ## 기술 스택
 
-| 영역          | 선택                                                                   |
-| ------------- | ---------------------------------------------------------------------- |
-| 프레임워크    | React + Vite (SPA), TypeScript                                         |
-| 스타일        | Tailwind CSS 4 + 디자인 토큰 (`docs/design/nonstop-design-tokens.md`)  |
-| 데이터 · 상태 | TanStack Query (서버 상태), Zustand `persist` (기기 저장)              |
-| API           | `openapi.yaml` → openapi-typescript 타입 생성 예정, 개발 중에는 MSW 목 |
-| 제스처        | 피드는 CSS scroll-snap + 포인터 이벤트, 온보딩 카드 드래그는 Motion    |
-| 도구          | pnpm, ESLint + Prettier, Vitest + Testing Library, GitHub Actions CI   |
-| 배포          | Firebase Hosting (배포에만 사용, Firebase JS SDK는 쓰지 않음)          |
+| 영역          | 선택                                                                  |
+| ------------- | --------------------------------------------------------------------- |
+| 프레임워크    | React + Vite (SPA), TypeScript                                        |
+| 스타일        | Tailwind CSS 4 + 디자인 토큰 (`docs/design/nonstop-design-tokens.md`) |
+| 데이터 · 상태 | TanStack Query (서버 상태), Zustand `persist` (기기 저장)             |
+| API           | `openapi.yaml` → openapi-typescript 타입 생성, 개발 중에는 MSW 목     |
+| 제스처        | 피드는 CSS scroll-snap + 포인터 이벤트, 온보딩 카드 드래그는 Motion   |
+| 도구          | pnpm, ESLint + Prettier, Vitest + Testing Library, GitHub Actions CI  |
+| 배포          | Firebase Hosting (배포에만 사용, Firebase JS SDK는 쓰지 않음)         |
 
 - Firebase JS SDK, PWA(서비스 워커), FCM은 데모 범위에서 빠져 쓰지 않는다.
 
 ## 명령어
 
-| 명령             | 하는 일                                                        |
-| ---------------- | -------------------------------------------------------------- |
-| `pnpm dev`       | 개발 서버 (기본은 MSW 목 모드)                                 |
-| `pnpm build`     | 타입 검사 후 배포용 빌드(`dist/`)                              |
-| `pnpm lint`      | ESLint                                                         |
-| `pnpm typecheck` | TypeScript 검사                                                |
-| `pnpm test`      | Vitest 1회 실행 (`pnpm test:watch`는 감시 모드)                |
-| `pnpm format`    | Prettier로 정리 (`format:check`는 검사만)                      |
-| `pnpm gen:api`   | `../nonstop-be/openapi.yaml`에서 API 타입 생성 (명세가 생기면) |
+| 명령             | 하는 일                                         |
+| ---------------- | ----------------------------------------------- |
+| `pnpm dev`       | 개발 서버 (기본은 MSW 목 모드)                  |
+| `pnpm build`     | 타입 검사 후 배포용 빌드(`dist/`)               |
+| `pnpm lint`      | ESLint                                          |
+| `pnpm typecheck` | TypeScript 검사                                 |
+| `pnpm test`      | Vitest 1회 실행 (`pnpm test:watch`는 감시 모드) |
+| `pnpm format`    | Prettier로 정리 (`format:check`는 검사만)       |
+| `pnpm gen:api`   | `../nonstop-be/openapi.yaml`에서 API 타입 생성  |
 
 - 커밋 전에 `format:check`, `lint`, `typecheck`, `test`, `build`가 모두 통과해야 한다. CI도 같은 순서로 검사한다.
 
@@ -98,9 +98,9 @@
 - 색은 잉크 계열과 살구색 두 가지만 쓴다. 살구색 면(`bg-accent`)은 한 화면에 하나만 둔다. 형광펜(`bg-highlight`)은 논문의 한 줄 요약(`oneLine`)에만 쓴다.
 - 화면을 읽기 면(피드, 논문 카드, 상세, 저장함)과 루틴 면(출석 스트릭, 온보딩, 빈 화면, 오류)으로 나눈다. 마스코트와 살구색 면은 루틴 면에만 쓴다.
 - 서체는 Pretendard 하나다. 논문 제목 아래에 영어 원제를 항상 함께 표기하고, arXiv ID · 날짜 · 일수에는 `tabular-nums slashed-zero`를 쓴다.
-- 라이트 모드만 쓴다. 피드도 라이트다.
+- 라이트 모드만 쓴다. 단, 피드는 팀 피드백(2026-11-11)에 따라 어두운 배경(`.theme-dark`)으로 둔다.
 - 하단 탭은 홈 · 피드 · 저장함 · 메뉴 4개다.
-- 가로 제스처는 피드에서 상세로 가는 오른쪽 스와이프 하나만 쓴다. 화면 왼쪽 가장자리 20px 안에서 시작한 제스처는 무시한다. 두 번 누르기, 길게 누르기는 쓰지 않는다.
+- 가로 제스처는 피드에서 상세로 가는 오른쪽 스와이프와, 홈 오늘의 논문 가로 넘김(팀 피드백 2026-11-11)만 쓴다. 화면 왼쪽 가장자리 20px 안에서 시작한 제스처는 무시한다. 두 번 누르기, 길게 누르기는 쓰지 않는다.
 - 로딩은 스켈레톤만 쓴다. 원형 스피너와 햄스터 로더는 쓰지 않는다.
 - 색은 토큰 유틸리티로만 쓴다. 16진 색, 대괄호 임의 값, 그라데이션, 블러, 장식 그림자를 쓰지 않는다.
 - 문구는 해요체로 쓰고, 줄표 · 느낌표 · 이모지를 쓰지 않는다. AI 생성물에는 항상 "AI 요약" 배지를 붙인다.
@@ -119,12 +119,12 @@
 
 ## 기기 저장 (localStorage)
 
-| 키                   | 내용                                                                  |
-| -------------------- | --------------------------------------------------------------------- |
-| `nonstop:v1:profile` | `interests`(키워드 슬러그와 가중치), `defaultLevel`, `onboardedAt`    |
-| `nonstop:v1:saves`   | `{ paperId, savedAt }` 배열                                           |
-| `nonstop:v1:streak`  | `current`, `longest`, `lastDate`(YYYY-MM-DD), `recentDates`(최근 7개) |
-| `nonstop:v1:read`    | 최근 읽은 `paperId` 최대 50개 (홈 추천 제외용)                        |
+| 키                   | 내용                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
+| `nonstop:v1:profile` | `keywords`(직접 고른 키워드), `interests`(키워드 슬러그와 가중치), `defaultLevel`, `onboardedAt` |
+| `nonstop:v1:saves`   | `{ paperId, savedAt }` 배열                                                                      |
+| `nonstop:v1:streak`  | `current`, `longest`, `lastDate`(YYYY-MM-DD), `recentDates`(최근 7개)                            |
+| `nonstop:v1:read`    | 최근 읽은 `paperId` 최대 50개 (홈 추천 제외용)                                                   |
 
 - 모든 읽기 · 쓰기는 실패할 수 있다고 보고 처리한다. 저장소가 비어 있으면 처음 방문으로 본다.
 - 기기 데이터 초기화는 `nonstop:v1:` 접두사 키를 모두 지운다.

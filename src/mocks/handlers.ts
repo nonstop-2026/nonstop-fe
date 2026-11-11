@@ -104,11 +104,18 @@ export const handlers = [
     await delay(350)
     const url = new URL(request.url)
     const level = readLevel(url)
+    // 백엔드와 같은 규칙: 가장 최근 게시일 묶음에서 점수 1위가 오늘의 논문,
+    // 나머지 전체에서 점수순 10편이 추천
     const list = ranked(readInterests(url), readList(url, 'exclude'))
+    const latest = CATALOG.reduce((max, e) => (e.publishedAt > max ? e.publishedAt : max), '')
+    const today = list.find((e) => e.publishedAt === latest)
     const body: HomeResponse = {
       today: seoulToday(),
-      todayPaper: list[0] ? toSummary(list[0], level) : null,
-      recommendations: list.slice(1, 6).map((e) => toSummary(e, level)),
+      todayPaper: today ? toSummary(today, level) : null,
+      recommendations: list
+        .filter((e) => e !== today)
+        .slice(0, 10)
+        .map((e) => toSummary(e, level)),
       isFallback: false,
     }
     return HttpResponse.json(body)
